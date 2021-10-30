@@ -96,7 +96,6 @@ def bfs_find_all_paths(graph,start,end,paths_list):
         for neighbour in neighbours(edges,curr_path[-1]):
             if neighbour not in curr_path:
 
-
                 new_path = []
                 for i in curr_path:
                     new_path.append(i)
@@ -128,8 +127,6 @@ def neighbours(edges, vertex):
             neighbours_list.append(edge[1])
     return neighbours_list
     
-
-
 
 # read sample.txt and return the data in the format of start, end, edges, weights.
 def read_triple_weight_txt(filename):
