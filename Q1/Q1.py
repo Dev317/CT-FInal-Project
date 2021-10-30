@@ -18,6 +18,8 @@ def find_highest_scores_and_paths(edges, weights, start, end):
 
     max_score = 0
 
+
+    # create a tupple with path and its weight_product
     score_map = []
     for i in range(len(score_list)):
         if score_list[i] > max_score:
@@ -28,10 +30,10 @@ def find_highest_scores_and_paths(edges, weights, start, end):
     answer = max_score
     final_path_list = []
 
+    # find path with max weight_product
     for tupple in score_map:
         if tupple[1] == max_score:
             final_path_list.append(tupple[0])
-
 
     return answer, final_path_list
 
@@ -84,6 +86,8 @@ def bfs_find_all_paths(graph,start,end,paths_list):
 
     curr_path.append(start)
     queue.append(curr_path)
+    
+    # limit to 10_000 possible paths
     counter = 0
 
     while len(queue) != 0 and counter < 10000:
@@ -103,7 +107,6 @@ def bfs_find_all_paths(graph,start,end,paths_list):
                 new_path.append(neighbour)
                 queue.append(new_path)
 
-    # print(paths_list)
     return paths_list
 
 def create_graph(edges):
