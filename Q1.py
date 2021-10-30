@@ -1,5 +1,136 @@
 import time
 
+def find_highest_scores_and_paths(edges, weights, start, end):
+    answer = 0.
+    # paths_list = [[]]
+    paths_list = []
+
+    visited = []
+    graph = create_graph(edges)
+
+    # paths_list = dfs_find_all_paths(graph,start,end)
+    paths_list = bfs_find_all_paths(graph,start,end,paths_list)
+    # print(paths_list)
+
+    edge_weight_map = edge_weight(edges, weights)
+    score_list = find_score(edge_weight_map, paths_list)
+    # print(score_list)
+
+    max_score = 0
+
+    score_map = []
+    for i in range(len(score_list)):
+        if score_list[i] > max_score:
+            max_score = score_list[i]
+        
+        score_map.append((paths_list[i],score_list[i]))
+    
+    answer = max_score
+    final_path_list = []
+
+    for tupple in score_map:
+        if tupple[1] == max_score:
+            final_path_list.append(tupple[0])
+
+
+    return answer, final_path_list
+
+def find_score(edge_weight_map, paths_list):
+    final_score = []
+
+    for path in paths_list:
+        temp_score = 1
+        for i in range(len(path) - 1):
+            key = path[i] + "," + path[i+1]
+            temp_score *= edge_weight_map[key]
+        final_score.append(temp_score)
+    
+    return final_score
+
+
+def edge_weight(edges, weights):
+    idx = 0
+    edge_weight_map = {}
+    for edge in edges:
+
+        edge_weight_element = []
+        key = edge[0] + "," + edge[1]
+        edge_weight_map[key] = weights[idx]
+
+        idx += 1
+    
+    return edge_weight_map
+
+# DFS
+# def dfs_find_all_paths(graph, start, end, path=[]):
+#         path = path + [start]
+#         if start == end:
+#             return [path]
+#         if start not in graph:
+#             return []
+#         paths = []
+#         for node in graph[start]:
+#             if node not in path:
+#                 newpaths = find_all_paths(graph, node, end, path)
+#                 for newpath in newpaths:
+#                     paths.append(newpath)
+#         return paths  
+
+#BFS
+def bfs_find_all_paths(graph,start,end,paths_list):
+    queue = []
+
+    curr_path = []
+
+    curr_path.append(start)
+    queue.append(curr_path)
+    counter = 0
+
+    while len(queue) != 0 and counter < 10000:
+        curr_path = queue.pop(0)
+
+        if curr_path[-1] == end:
+            paths_list.append(curr_path)
+            counter += 1
+        
+        for neighbour in neighbours(edges,curr_path[-1]):
+            if neighbour not in curr_path:
+
+
+                new_path = []
+                for i in curr_path:
+                    new_path.append(i)
+
+                new_path.append(neighbour)
+                queue.append(new_path)
+
+    # print(paths_list)
+    return paths_list
+
+def create_graph(edges):
+    graph = {}
+    vertex_list = []
+    for edge in edges:
+        if edge[0] not in vertex_list:
+            vertex_list.append(edge[0])
+            graph[edge[0]] = [edge[1]]
+        else:
+            neighbours = graph[edge[0]]
+            neighbours.append(edge[1])
+            graph[edge[0]] = neighbours
+    
+    return graph
+        
+def neighbours(edges, vertex):
+    neighbours_list = []
+    for edge in edges:
+        if edge[0] == vertex:
+            neighbours_list.append(edge[1])
+    return neighbours_list
+    
+
+
+
 # read sample.txt and return the data in the format of start, end, edges, weights.
 def read_triple_weight_txt(filename):
     edges = []
@@ -71,17 +202,11 @@ def evaluate_q1(predict_sample, sample_answer, edges):
     score += sum(list(gt_dict.values()))
     return score
 
-def find_highest_scores_and_paths(edges, weights, start, end):
-  answer = 0.
-  paths_list = []
-  # TODO: edit this function.
-  return answer, paths_list
-
-
-
-
-
-
+def print_graph(start,end,edges,weights):
+    print("Starting point:", start)
+    print("Ending point:", end)
+    print("Edges: ", edges)
+    print("Weights: ", weights)
 
 ###########################################################################
 ####################### test case sample1.txt #############################
@@ -89,7 +214,7 @@ def find_highest_scores_and_paths(edges, weights, start, end):
 t1 = time.time()
 sample_filename = './sample1.txt'
 start, end, edges, weights = read_triple_weight_txt(sample_filename)
-
+print_graph(start,end,edges,weights)
 # max_score answer for sample1.txt
 sample1_answer = (0.045, [['u0', 'i1', 'u1', 'i2']])
 
@@ -105,7 +230,7 @@ print (f'evaluation_score: {evaluation_score}')
 t2 = time.time()
 print (f'Time:{t2-t1}')
 
-"""
+
 ###########################################################################
 ####################### test case sample2.txt #############################
 t1 = time.time()
@@ -151,4 +276,3 @@ print (f'Time:{t2-t1}')
 
 ###########################################################################
 ###########################################################################
-"""
