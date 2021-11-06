@@ -243,37 +243,37 @@ print (f'time: {t2-t1}')
 
 ###########################################################################
 ####################### test case sample2.txt #############################
-t1 = time.time()
-sample_filename = './sample2.txt'
-start, edges, weights = read_triple_weight_txt(sample_filename)
-ranking = ranking_func(edges, weights, start)
+# t1 = time.time()
+# sample_filename = './sample2.txt'
+# start, edges, weights = read_triple_weight_txt(sample_filename)
+# ranking = ranking_func(edges, weights, start)
 
-sample_answer = [('i0', 0.7), ('i1', 0.6), ('i2', 0.6), ('i6', 0.504), ('i4', 0.44799999999999995), ('i5', 0.44799999999999995), ('i3', 0.3528), ('i7', 0.3528)]
+# sample_answer = [('i0', 0.7), ('i1', 0.6), ('i2', 0.6), ('i6', 0.504), ('i4', 0.44799999999999995), ('i5', 0.44799999999999995), ('i3', 0.3528), ('i7', 0.3528)]
 
-print ('ranking_list:', ranking)
+# print ('ranking_list:', ranking)
 
-evaluation_score = evaluation_q2_ranking(ranking, sample_answer)
+# evaluation_score = evaluation_q2_ranking(ranking, sample_answer)
 
-# print (len(ranking))
-print ('evaluation_score:',evaluation_score)
-t2 = time.time()
-print (f'time: {t2-t1}')
+# # print (len(ranking))
+# print ('evaluation_score:',evaluation_score)
+# t2 = time.time()
+# print (f'time: {t2-t1}')
 
 
 ###########################################################################
 ####################### test case sample3.txt #############################
-t1 = time.time()
-sample_filename = './sample3.txt'
-start, edges, weights = read_triple_weight_txt(sample_filename)
-ranking = ranking_func(edges, weights, start)
+# t1 = time.time()
+# sample_filename = './sample3.txt'
+# start, edges, weights = read_triple_weight_txt(sample_filename)
+# ranking = ranking_func(edges, weights, start)
 
-sample_answer =[('i11', 0.9), ('i5', 0.54), ('i6', 0.48600000000000004), ('i7', 0.48600000000000004), ('i9', 0.48600000000000004), ('i10', 0.48600000000000004), ('i8', 0.38880000000000003), ('i4', 0.34992000000000006), ('i2', 0.3), ('i0', 0.2916), ('i3', 0.27216), ('i1', 0.1)]
+# sample_answer =[('i11', 0.9), ('i5', 0.54), ('i6', 0.48600000000000004), ('i7', 0.48600000000000004), ('i9', 0.48600000000000004), ('i10', 0.48600000000000004), ('i8', 0.38880000000000003), ('i4', 0.34992000000000006), ('i2', 0.3), ('i0', 0.2916), ('i3', 0.27216), ('i1', 0.1)]
 
-print ('ranking_list:', ranking)
+# print ('ranking_list:', ranking)
 
-evaluation_score = evaluation_q2_ranking(ranking, sample_answer)
+# evaluation_score = evaluation_q2_ranking(ranking, sample_answer)
 
-# print (len(ranking))
-print ('evaluation_score:',evaluation_score)
-t2 = time.time()
-print (f'time: {t2-t1}')
+# # print (len(ranking))
+# print ('evaluation_score:',evaluation_score)
+# t2 = time.time()
+# print (f'time: {t2-t1}')

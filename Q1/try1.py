@@ -1,133 +1,74 @@
+import sys
 import time
+sys.setrecursionlimit(1500)
 
 def find_highest_scores_and_paths(edges, weights, start, end):
-    answer = 0.
-    # paths_list = [[]]
+    answer = .0
     paths_list = []
 
-    graph = create_graph(edges)
+    # create a graph
+    graph = create_graph(edges,weights)
 
-    # paths_list = dfs_find_all_paths(graph,start,end)
-    paths_list = bfs_find_all_paths(graph,start,end,paths_list)
-    # print(paths_list)
-
-    edge_weight_map = edge_weight(edges, weights)
-    score_list = find_score(edge_weight_map, paths_list)
-    # print(score_list)
-
-    max_score = 0
-
-    # create a tupple with path and its weight_product
-    score_map = []
-    for i in range(len(score_list)):
-        if score_list[i] > max_score:
-            max_score = score_list[i]
-        
-        score_map.append((paths_list[i],score_list[i]))
-    
-    answer = max_score
-    final_path_list = []
-
-    # find path with max weight_product
-    for tupple in score_map:
-        if tupple[1] == max_score:
-            final_path_list.append(tupple[0])
-
-    return answer, final_path_list
-
-def find_score(edge_weight_map, paths_list):
-    final_score = []
-
-    for path in paths_list:
-        temp_score = 1
-        for i in range(len(path) - 1):
-            key = path[i] + "," + path[i+1]
-            temp_score *= edge_weight_map[key]
-        final_score.append(temp_score)
-    
-    return final_score
-
-
-def edge_weight(edges, weights):
-    idx = 0
-    edge_weight_map = {}
-    for edge in edges:
-
-        edge_weight_element = []
-        key = edge[0] + "," + edge[1]
-        edge_weight_map[key] = weights[idx]
-
-        idx += 1
-    
-    return edge_weight_map
-
-# DFS
-# def dfs_find_all_paths(graph, start, end, path=[]):
-#         path = path + [start]
-#         if start == end:
-#             return [path]
-#         if start not in graph:
-#             return []
-#         paths = []
-#         for node in graph[start]:
-#             if node not in path:
-#                 newpaths = find_all_paths(graph, node, end, path)
-#                 for newpath in newpaths:
-#                     paths.append(newpath)
-#         return paths  
-
-#BFS
-def bfs_find_all_paths(graph,start,end,paths_list):
     queue = []
+    queue_element = ([start],1)
+    queue.append(queue_element)
 
-    curr_path = []
+    stored_paths = []
 
-    curr_path.append(start)
-    queue.append(curr_path)
-    
-    # limit to 10_000 possible paths
-    counter = 0
-
-    while len(queue) != 0 and counter < 50:
-        curr_path = queue.pop(0)
+    while len(queue) != 0:
+        curr_element = queue.pop(0)
+        curr_path = curr_element[0]
+        curr_product = curr_element[1]
 
         if curr_path[-1] == end:
-            paths_list.append(curr_path)
-            counter += 1
-        
-        for neighbour in neighbours(edges,curr_path[-1]):
-            if neighbour not in curr_path:
+            if curr_product > answer and curr_path not in stored_paths:
+                stored_paths.append(curr_path)
+                answer = curr_product
+                while len(paths_list) != 0:
+                    paths_list.pop(0)
+                paths_list.append(curr_path)
+            
+            if curr_product == answer and curr_path not in stored_paths:
+                stored_paths.append(curr_path)
+                paths_list.append(curr_path)
+            
+        list_weight = []
+        for neighbour in graph[curr_path[-1]]:
+            list_weight.append(neighbour[1])
+        list_weight.sort(reverse=True)
 
-                new_path = []
-                for i in curr_path:
-                    new_path.append(i)
-
-                new_path.append(neighbour)
-                queue.append(new_path)
-
-    return paths_list
-
-def create_graph(edges):
-    graph = {}
-    vertex_list = []
-    for edge in edges:
-        if edge[0] not in vertex_list:
-            vertex_list.append(edge[0])
-            graph[edge[0]] = [edge[1]]
+        limit = 0
+        if len(list_weight) >= 2:
+            limit = list_weight[1]
         else:
-            neighbours = graph[edge[0]]
-            neighbours.append(edge[1])
-            graph[edge[0]] = neighbours
+            limit = list_weight[0]
+
+        for neighbour in graph[curr_path[-1]]:
+            if neighbour[0] not in curr_path and neighbour[1] >= limit:
+                new_path = curr_path + [neighbour[0]]
+                new_product = curr_product * neighbour[1]
+                queue.append((new_path, new_product))
+    
+    return answer, paths_list
+
+
+def create_graph(edges, weights):
+    graph = {}
+    for idx in range(len(edges)):
+        
+        # if the vertex is not in the graph, create a new mapping
+        if edges[idx][0] not in graph:
+            new_list = []
+            new_list.append((edges[idx][1], weights[idx]))
+            graph[edges[idx][0]] = new_list
+        else:
+            current_list = graph[edges[idx][0]]
+            current_list.append((edges[idx][1], weights[idx]))
+            graph[edges[idx][0]] = current_list
     
     return graph
-        
-def neighbours(edges, vertex):
-    neighbours_list = []
-    for edge in edges:
-        if edge[0] == vertex:
-            neighbours_list.append(edge[1])
-    return neighbours_list
-    
+
+
 
 # read sample.txt and return the data in the format of start, end, edges, weights.
 def read_triple_weight_txt(filename):
@@ -227,7 +168,6 @@ print (f'paths_list: {paths_list}')
 print (f'evaluation_score: {evaluation_score}')
 t2 = time.time()
 print (f'Time:{t2-t1}')
-
 
 ###########################################################################
 ####################### test case sample2.txt #############################
