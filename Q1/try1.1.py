@@ -1,55 +1,40 @@
-import sys
+import heapq
+from collections import defaultdict
 import time
-import math
-sys.setrecursionlimit(1500)
 
 def find_highest_scores_and_paths(edges, weights, start, end):
-    answer = .0
+    answer = 0.
     paths_list = []
+    graph = create_graph(edges, weights)
+    heap = [(-1,start,[start])]
 
-    # create a graph
-    graph = create_graph(edges,weights)
+    seen = defaultdict(lambda : (0, list))
 
-    queue = []
-    queue_element = ([start],1)
-    queue.append(queue_element)
+    while heap:
+        # print(heap)
+        prob, node, curr_path = heapq.heappop(heap)
+        prob *= -1
 
-    stored_paths = []
+        for neighbor, edge_prob in graph[node]:
+            new_prob = prob * edge_prob
 
-    while len(queue) != 0:
-        curr_element = queue.pop(0)
-        curr_path = curr_element[0]
-        curr_product = curr_element[1]
-
-        if curr_path[-1] == end:
-            if curr_product > answer and curr_path not in stored_paths:
-                stored_paths.append(curr_path)
-                answer = curr_product
-                while len(paths_list) != 0:
-                    paths_list.pop(0)
-                paths_list.append(curr_path)
+            new_path = []
+            for i in curr_path:
+                new_path.append(i)
             
-            if curr_product == answer and curr_path not in stored_paths:
-                stored_paths.append(curr_path)
-                paths_list.append(curr_path)
-            
-        list_weight = []
-        for neighbour in graph[curr_path[-1]]:
-            list_weight.append(neighbour[1])
-        list_weight.sort(reverse=True)
+            if seen[neighbor][0] <= new_prob:
+                new_path.append(neighbor)
+                heapq.heappush(heap, (-new_prob, neighbor, new_path))
 
-        limit = 0
-        if len(list_weight) >= 2:
-            limit = list_weight[1]
-        else:
-            limit = list_weight[0]
+                if neighbor == end:
+                    # print(new_path)
+                    paths_list.append(new_path)
+                    
 
-        for neighbour in graph[curr_path[-1]]:
-            if neighbour[0] not in curr_path and neighbour[1] >= limit:
-                new_path = curr_path + [neighbour[0]]
-                new_product = curr_product * neighbour[1]
-                queue.append((new_path, new_product))
-    
+                seen[neighbor] = (new_prob, new_path)
+
+    # print(seen[end][1])
+    answer = seen[end][0]
     return answer, paths_list
 
 
@@ -68,6 +53,7 @@ def create_graph(edges, weights):
             graph[edges[idx][0]] = current_list
     
     return graph
+
 
 
 
@@ -169,6 +155,7 @@ print (f'paths_list: {paths_list}')
 print (f'evaluation_score: {evaluation_score}')
 t2 = time.time()
 print (f'Time:{t2-t1}')
+
 
 ###########################################################################
 ####################### test case sample2.txt #############################
