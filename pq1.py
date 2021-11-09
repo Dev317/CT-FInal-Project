@@ -11,38 +11,38 @@ def find_highest_scores_and_paths(edges, weights, start, end):
     # create a priority queue
     heap = [(-1,start,[start])]
 
-    # a dictionary storing all the max probability path and path from a starting point to other points in the graph
+    # a dictionary storing all the max product weight and path from a starting point to other points in the graph
     seen = defaultdict(lambda : (0, list))
 
-    # dijkstra's algorithm
+    # modified dijkstra's algorithm
     while heap:
-        prob, node, curr_path = heapq.heappop(heap)
+        product_weight, node, curr_path = heapq.heappop(heap)
 
-        # convert probability back to positive
-        prob *= -1
+        # convert product weight back to positive
+        product_weight *= -1
 
-        for neighbor, edge_prob in graph[node]:
+        for neighbor, edge_weight in graph[node]:
 
-            # find the new probability
-            new_prob = prob * edge_prob
+            # find the new product weight
+            product_weight = product_weight * edge_weight
 
             new_path = []
             for i in curr_path:
                 new_path.append(i)
             
-            # check if the new probability is larger or equal to the current probability
-            if seen[neighbor][0] <= new_prob:
+            # check if the new product weight is larger or equal to the current product weight
+            if seen[neighbor][0] <= product_weight:
                 new_path.append(neighbor)
 
-                # convert probability back to negative for sorting
-                # large positive probability -> when negative -> becomes small
-                heapq.heappush(heap, (-new_prob, neighbor, new_path))
+                # convert product weight back to negative for sorting
+                # large positive product weight -> when negative -> becomes small
+                heapq.heappush(heap, (-product_weight, neighbor, new_path))
 
                 # push the found path to paths_list once the ending point is reached
                 if neighbor == end:
                     paths_list.append(new_path)
 
-                seen[neighbor] = (new_prob, new_path)
+                seen[neighbor] = (product_weight, new_path)
 
     answer = seen[end][0]
     return answer, paths_list
